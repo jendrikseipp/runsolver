@@ -1,7 +1,7 @@
 VERSION=3.4.1
 #SVNVERSION=`svnversion .`
 SVNVERSION=$(word 2,$$Rev: 3018 $$)
-#DEBUG=-g
+DEBUG=-g
 #DEBUG=-O3 -g
 
 STATIC=

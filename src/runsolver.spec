@@ -1,12 +1,12 @@
 Name:		runsolver
 Summary:	run a solver and tightly control the ressources it uses
-Version:	3.4.1
+Version:	3.4.0
 Release:	1
 License:	GPLv3
 Group: 		Applications/System
 Source0: 	%{name}-%{version}.tar.bz2
 BuildRoot:	%{_tmppath}/%{name}-root
-URL: 		https://github.com/utpalbora/runsolver.git
+URL: 		http://www.cril.univ-artois.fr/~roussel/runsolver
 
 %description
 
