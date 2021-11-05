@@ -6,15 +6,12 @@ v3.4.0](http://www.cril.univ-artois.fr/~roussel/runsolver/) source code,
 with some minor fixes (see [changelog](src/Changelog)).
 
 
-## Dependency
-1. libnuma-dev
-
 ## Compile
 
-`cd src`
-`` make -j `nproc` ``
+    cd src
+    make -j `nproc`
 
-## Useage
+## Usage
 
 `./runsolver --timestamp -C 1200 -W 180 -R 8192 -V 102400 -w watch.log -v values.log -o tool_output.log ./tool_name tool_args`
 

@@ -5,13 +5,13 @@ DEBUG=-g
 #DEBUG=-O3 -g
 
 STATIC=
-#STATIC=-static 
+#STATIC=-static
 
 WSIZE:=$(shell if [ `uname -m` = 'x86_64' ] ; then echo 64; else echo 32; fi )
 
-CFLAGS=-O3 -std=c++11 -DWITH_NUMA -Dtmpdebug -Wall -DVERSION=\"$(VERSION)\" -DSVNVERSION=\"$(SVNVERSION)\" -DWSIZE=$(WSIZE)
+CFLAGS=-O3 -std=c++11 -Dtmpdebug -Wall -DVERSION=\"$(VERSION)\" -DSVNVERSION=\"$(SVNVERSION)\" -DWSIZE=$(WSIZE)
 LDFLAGS= $(STATIC) -Wl,--build-id
-LIBS=-lnuma
+LIBS=
 
 ifneq ($(findstring alineos.net,$(HOSTNAME)),)
 # if needed, path to the dynamic library we use
