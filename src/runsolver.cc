@@ -1083,8 +1083,8 @@ void usage(char *prgname) {
 }
 
 void printVersion() {
-  cout << "runsolver version " << version << " (svn: " << SVNVERSION
-       << ") Copyright (C) 2010-2013 Olivier ROUSSEL\n\n"
+  cout << "runsolver version " << version
+       << " Copyright (C) 2010-2013 Olivier ROUSSEL\n\n"
        << "This program is distributed in the hope that it will be useful,\n"
        << "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
        << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"

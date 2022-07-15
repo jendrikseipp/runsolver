@@ -1,13 +1,11 @@
 VERSION=3.4.0
-#SVNVERSION=`svnversion .`
-SVNVERSION=$(word 2,$$Rev: 3018 $$)
 DEBUG=-g
 #DEBUG=-O3 -g
 
 STATIC=
 #STATIC=-static
 
-CFLAGS=-O3 -std=c++11 -Dtmpdebug -Wall -DVERSION=\"$(VERSION)\" -DSVNVERSION=\"$(SVNVERSION)\"
+CFLAGS=-O3 -std=c++11 -Dtmpdebug -Wall -DVERSION=\"$(VERSION)\"
 LDFLAGS= $(STATIC) -Wl,--build-id
 LIBS=
 
@@ -45,7 +43,7 @@ archive: /tmp/runsolver-$(VERSION).tar.bz2
 
 /tmp/runsolver-$(VERSION).tar.bz2: realclean $(SRC) Makefile
 	sed -i -e 's/^Version:.*/Version:\t'$(VERSION)'/' runsolver.spec
-	tar cvjf /tmp/runsolver-$(VERSION).tar.bz2 -C ../.. runsolver/src --exclude .svn
+	tar cvjf /tmp/runsolver-$(VERSION).tar.bz2 -C ../.. runsolver/src
 
 rpm: /tmp/runsolver-$(VERSION).tar.bz2
 	rpmbuild -tb /tmp/runsolver-$(VERSION).tar.bz2

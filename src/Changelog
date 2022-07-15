@@ -2,6 +2,7 @@ Changes after version 3.4.0
 
 - Compile without libnuma (Jendrik Seipp).
 - Let compiler choose bitwidth (Jendrik Seipp).
+- Remove SVN version number (Jendrik Seipp).
 - Expose short option for input file (-i) (Utpal Bora).
 - Expose options for limiting RSS (-R) and virtual memory (-V) (Utpal Bora).
 - Print solver exit code and maximum RSS in value file (Utpal Bora).
