@@ -1,4 +1,4 @@
-VERSION=3.4.1
+VERSION=3.4.0
 #SVNVERSION=`svnversion .`
 SVNVERSION=$(word 2,$$Rev: 3018 $$)
 DEBUG=-g
@@ -7,9 +7,7 @@ DEBUG=-g
 STATIC=
 #STATIC=-static
 
-WSIZE:=$(shell if [ `uname -m` = 'x86_64' ] ; then echo 64; else echo 32; fi )
-
-CFLAGS=-O3 -std=c++11 -Dtmpdebug -Wall -DVERSION=\"$(VERSION)\" -DSVNVERSION=\"$(SVNVERSION)\" -DWSIZE=$(WSIZE)
+CFLAGS=-O3 -std=c++11 -Dtmpdebug -Wall -DVERSION=\"$(VERSION)\" -DSVNVERSION=\"$(SVNVERSION)\"
 LDFLAGS= $(STATIC) -Wl,--build-id
 LIBS=
 
