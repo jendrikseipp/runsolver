@@ -882,7 +882,7 @@ public:
       cout << "runsolver used " << r.ru_utime.tv_sec + r.ru_utime.tv_usec * 1E-6
            << " second user time and "
            << r.ru_stime.tv_sec + r.ru_stime.tv_usec * 1E-6
-           << " second system time\n"
+           << " second system time (ignored in all statistics)\n"
            << endl;
 
       cout << "The end" << endl;
