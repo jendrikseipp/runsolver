@@ -1,5 +1,6 @@
 Changes after version 3.4.0
 
+- Maximize over measured solver CPU times to account for nondeterministic measurement errors (Jendrik Seipp).
 - Compile without libnuma (Jendrik Seipp).
 - Let compiler choose bitwidth (Jendrik Seipp).
 - Remove SVN version number (Jendrik Seipp).

@@ -309,33 +309,68 @@ public:
       cout << "Child ended for unknown reason !!" << endl;
     }
 
-    // Elapsed real seconds
-    float wcTime =
-        stoptv.tv_sec + stoptv.tv_usec * 1E-6
-        - starttv.tv_sec - starttv.tv_usec * 1E-6;
-    cout << "Wall clock time (s): " << wcTime << endl;
+    float wcTime;           // Elapsed real seconds
+    float solverCPUTime;    // Elapsed solver (CPU) seconds
+    float solverUserTime;   // Elapsed solver (User CPU) seconds
+    float solverSystemTime; // Elapsed solver (System CPU) seconds
 
-    /*
-      JS: Some notes on CPU time measurements.
+    wcTime = stoptv.tv_sec + stoptv.tv_usec * 1E-6 - starttv.tv_sec -
+             starttv.tv_usec * 1E-6;
 
-      Previously, the solver*Time values were computed with
-      getrusage(RUSAGE_CHILDREN, ...). This function call returns resource usage
-      statistics for all descendants of the calling process (i.e., the solver
-      process and its descendants) that have terminated and have been waited
-      for. This means that subprocesses that have not called wait() are ignored.
-      Since this often underestimates the CPU times, we instead recompute the
-      CPU time for the watched process (current*Time) and add the time for
-      children that have already terminated (completed*Time).
-    */
+    // get the CPU time of our children
+    getrusage(RUSAGE_CHILDREN, &childrusage);
+
+    solverUserTime =
+        childrusage.ru_utime.tv_sec + childrusage.ru_utime.tv_usec * 1E-6;
+
+    solverSystemTime =
+        childrusage.ru_stime.tv_sec + childrusage.ru_stime.tv_usec * 1E-6;
+
+    // solverCPUTime already contains completedCPUTime
+    solverCPUTime = solverUserTime + solverSystemTime;
+
+    // For debugging.
+    float oldSolverCPUTime = solverCPUTime;
+    float oldCurrentCPUTime = currentCPUTime;
 
     // Update current*Time variables one last time for the overall solver times.
     procTree->currentCPUTime(currentUserTime, currentSystemTime);
     currentCPUTime = currentUserTime + currentSystemTime;
 
-    float solverUserTime = completedUserTime + currentUserTime;
-    float solverSystemTime = completedSystemTime + currentSystemTime;
-    float solverCPUTime = solverUserTime + solverSystemTime;
+    /*
+      JS: Some notes on CPU time measurements.
 
+      We noticed that sometimes the solverCPUTime is way below the real CPU
+      usage of the solver (3s vs. 1800s). Unfortunately, this behaviour is not
+      deterministic. We believe that the problems stems from the following:
+
+      The solver*Time values are computed with getrusage(RUSAGE_CHILDREN, ...).
+      This function call returns resource usage statistics for all descendants
+      of the calling process (i.e., the solver process and its descendants) that
+      have terminated and have been waited for. This means that subprocesses
+      that have not called wait() are ignored.
+
+      After many hours of looking into this, the best fix that we
+      could come up with is to report the maximum over the measured CPU times.
+    */
+    if (solverCPUTime < currentCPUTime) {
+        cout << "Warning: final solver CPU time is lower than maximum intermediate "
+            "value. --> Raising final value to the maximum intermediate value." << endl;
+        solverCPUTime = currentCPUTime;
+    }
+    solverUserTime = max(solverUserTime, currentUserTime);
+    solverSystemTime = max(solverSystemTime, currentSystemTime);
+
+    cout << endl;
+    cout << "For debugging: " << endl;
+    cout << "  oldCurrentCPUTime: " << oldCurrentCPUTime << endl;
+    cout << "  currentCPUTime: " << currentCPUTime << endl;
+    cout << "  completedCPUTime: " << completedCPUTime << endl;
+    cout << "  oldSolverCPUTime: " << oldSolverCPUTime << endl;
+    cout << "  solverCPUTime: " << solverCPUTime << endl;
+    cout << endl;
+
+    cout << "Wall clock time (s): " << wcTime << endl;
     cout << "CPU time (s): " << solverCPUTime << endl;
     cout << "CPU user time (s): " << solverUserTime << endl;
     cout << "CPU system time (s): " << solverSystemTime << endl;
