@@ -329,7 +329,48 @@ public:
     // solverCPUTime already contains completedCPUTime
     solverCPUTime = solverUserTime + solverSystemTime;
 
-    cout << "Real time (s): " << wcTime << endl;
+    // For debugging.
+    float oldSolverCPUTime = solverCPUTime;
+    float oldCurrentCPUTime = currentCPUTime;
+
+    // Update current*Time variables one last time for the overall solver times.
+    procTree->currentCPUTime(currentUserTime, currentSystemTime);
+    currentCPUTime = currentUserTime + currentSystemTime;
+
+    /*
+      JS: Some notes on CPU time measurements.
+
+      We noticed that sometimes the solverCPUTime is way below the real CPU
+      usage of the solver (3s vs. 1800s). Unfortunately, this behaviour is not
+      deterministic. We believe that the problems stems from the following:
+
+      The solver*Time values are computed with getrusage(RUSAGE_CHILDREN, ...).
+      This function call returns resource usage statistics for all descendants
+      of the calling process (i.e., the solver process and its descendants) that
+      have terminated and have been waited for. This means that subprocesses
+      that have not called wait() are ignored.
+
+      After many hours of looking into this, the best fix that we
+      could come up with is to report the maximum over the measured CPU times.
+    */
+    if (solverCPUTime < currentCPUTime) {
+        cout << "Warning: final solver CPU time is lower than maximum intermediate "
+            "value. --> Raising final value to the maximum intermediate value." << endl;
+        solverCPUTime = currentCPUTime;
+    }
+    solverUserTime = max(solverUserTime, currentUserTime);
+    solverSystemTime = max(solverSystemTime, currentSystemTime);
+
+    cout << endl;
+    cout << "For debugging: " << endl;
+    cout << "  oldCurrentCPUTime: " << oldCurrentCPUTime << endl;
+    cout << "  currentCPUTime: " << currentCPUTime << endl;
+    cout << "  completedCPUTime: " << completedCPUTime << endl;
+    cout << "  oldSolverCPUTime: " << oldSolverCPUTime << endl;
+    cout << "  solverCPUTime: " << solverCPUTime << endl;
+    cout << endl;
+
+    cout << "Wall clock time (s): " << wcTime << endl;
     cout << "CPU time (s): " << solverCPUTime << endl;
     cout << "CPU user time (s): " << solverUserTime << endl;
     cout << "CPU system time (s): " << solverSystemTime << endl;
@@ -347,7 +388,8 @@ public:
     getrusage(RUSAGE_CHILDREN, &r);
 
     cout << endl;
-    cout << "getrusage(RUSAGE_CHILDREN,...) data:" << endl;
+    cout << "Raw getrusage(RUSAGE_CHILDREN,...) data (only "
+            "includes finished processes that have been waited for):" << endl;
     cout << "user time used= " << r.ru_utime.tv_sec + r.ru_utime.tv_usec * 1E-6
          << endl;
     cout << "system time used= "
@@ -377,9 +419,9 @@ public:
           cout << ',' << completedChildrenList[i];
         cout << endl;
       }
-      cout << "#   total CPU time (s): " << completedCPUTime << endl;
-      cout << "#   total CPU user time (s): " << completedUserTime << endl;
-      cout << "#   total CPU system time (s): " << completedSystemTime << endl
+      cout << "#   CPU time reported (s): " << completedCPUTime << endl;
+      cout << "#   CPU user time reported (s): " << completedUserTime << endl;
+      cout << "#   CPU system time reported (s): " << completedSystemTime << endl
            << endl;
     }
 
