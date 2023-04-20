@@ -1007,8 +1007,8 @@ void usage(char *prgname) {
   cout
       << "-o filename or --solver-data filename\n"
       << "  redirects the solver output (both stdout and stderr) to filename\n"
-      << "--signal signalName\n"
-      << "  send signal <signalName> instead of SIGTERM\n"
+      << "--sig signalName\n"
+      << "  send signal <signalName> instead of SIGTERM (not implemented)\n"
       << "--input filename\n"
       << "  redirects the standard input of the runned program to filename\n"
       << "--timestamp\n"
